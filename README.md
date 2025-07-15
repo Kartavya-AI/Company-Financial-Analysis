@@ -1,54 +1,159 @@
-# FinancialAnalysis Crew
+# 🏦 Financial Company Analysis
 
-Welcome to the FinancialAnalysis Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+AI-powered financial document analysis tool specifically designed for Indian markets, leveraging CrewAI for comprehensive financial insights.
 
-## Installation
+## 🚀 Features
 
-Ensure you have Python >=3.10 <3.14 installed on your system. This project uses [UV](https://docs.astral.sh/uv/) for dependency management and package handling, offering a seamless setup and execution experience.
+- **📊 Comprehensive Analysis**: Automatic extraction and analysis of financial data from Indian documents
+- **🎯 Key Ratios**: Calculate important financial ratios with Indian context (IndAS, Companies Act 2013)
+- **⚠️ Risk Assessment**: Identify potential financial risks and red flags
+- **🤖 AI Chat**: Interactive Q&A about your financial documents
+- **📈 Visual Insights**: Interactive charts and performance dashboards
+- **🇮🇳 Indian Market Focus**: Handles Indian number formats (lakhs, crores), regulations, and business practices
 
-First, if you haven't already, install uv:
+## 📋 Supported Documents
 
+- Annual Reports (PDF)
+- Quarterly Results (PDF)
+- Financial Statements (CSV, Excel)
+- Balance Sheets
+- P&L Statements
+- Cash Flow Statements
+
+## 🛠️ Installation
+
+### Local Development
+
+1. **Clone the repository:**
 ```bash
-pip install uv
+git clone https://github.com/Kartavya-AI/Company-Financial-Analysis.git
+cd Company-Financial-Analysis
 ```
 
-Next, navigate to your project directory and install the dependencies:
-
-(Optional) Lock the dependencies and install them by using the CLI command:
+2. **Create virtual environment:**
 ```bash
-crewai install
-```
-### Customizing
-
-**Add your `OPENAI_API_KEY` into the `.env` file**
-
-- Modify `src/financial_analysis/config/agents.yaml` to define your agents
-- Modify `src/financial_analysis/config/tasks.yaml` to define your tasks
-- Modify `src/financial_analysis/crew.py` to add your own logic, tools and specific args
-- Modify `src/financial_analysis/main.py` to add custom inputs for your agents and tasks
-
-## Running the Project
-
-To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
-
-```bash
-$ crewai run
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-This command initializes the Financial-Analysis Crew, assembling the agents and assigning them tasks as defined in your configuration.
+3. **Run the Streamlit app:**
+```bash
+streamlit run streamlit_app.py
+```
 
-This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
+### Streamlit Cloud Deployment
 
-## Understanding Your Crew
+1. **Fork this repository** to your GitHub account
 
-The Financial-Analysis Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
+2. **Deploy to Streamlit Cloud:**
+   - Go to [share.streamlit.io](https://share.streamlit.io)
+   - Click "New app"
+   - Select your forked repository
+   - Set main file path: `streamlit_app.py`
+   - Click "Deploy"
 
-## Support
+## 📁 Project Structure
 
-For support, questions, or feedback regarding the FinancialAnalysis Crew or crewAI.
-- Visit our [documentation](https://docs.crewai.com)
-- Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
-- [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
-- [Chat with our docs](https://chatg.pt/DWjSBZn)
+```
+financial_analysis/
+├── src/
+│   └── financial_analysis/
+│       ├── __init__.py
+│       ├── crew.py                 # Main CrewAI implementation
+│       ├── main.py                 # CLI interface
+│       ├── config/
+│       │   ├── agents.yaml         # Agent configurations
+│       │   └── tasks.yaml          # Task configurations
+│       └── tools/
+│           ├── __init__.py
+│           └── custom_tool.py      # Financial analysis tool
+├── streamlit_app.py                # Streamlit web interface
+├── requirements.txt                # Python dependencies
+├── pyproject.toml                  # Project configuration
+└── README.md                       # This file
+```
 
-Let's create wonders together with the power and simplicity of crewAI.
+## 🎯 Usage
+
+### Web Interface (Streamlit)
+
+1. **Upload Document**: Use the sidebar to upload your financial document
+2. **Analyze**: Click "Analyze Document" to start AI analysis
+3. **Explore Results**: Navigate through tabs for different insights
+4. **AI Chat**: Ask specific questions about the analysis
+
+
+## 🤖 AI Agents
+
+The system uses three specialized AI agents:
+
+1. **Financial Analyst (Indian Markets)**
+   - Analyzes documents with Indian accounting standards
+   - Understands IndAS, Companies Act 2013, SEBI regulations
+   - Focuses on Indian market conditions and seasonal patterns
+
+2. **Data Processor (Indian Formats)**
+   - Extracts data from Indian financial document formats
+   - Handles NSE/BSE filings, annual reports, quarterly results
+   - Processes rupee denominations and Indian date formats
+
+3. **Report Generator (Indian Context)**
+   - Creates reports for Indian business environment
+   - Considers GST impact, monsoon effects, festival seasons
+   - Compares with Indian industry benchmarks
+
+## 📊 Analysis Features
+
+### Financial Ratios
+- **Profitability**: Net margin, EBITDA margin, ROE, ROCE
+- **Liquidity**: Current ratio, Quick ratio, Cash ratio
+- **Leverage**: Debt-to-equity, Interest coverage, Debt service coverage
+- **Efficiency**: Asset turnover, Working capital turnover, Inventory days
+
+### Risk Assessment
+- Liquidity risks
+- Leverage risks
+- Profitability concerns
+- Working capital issues
+- Regulatory compliance indicators
+
+### Indian Market Specifics
+- Number format handling (lakhs, crores)
+- Seasonal pattern analysis
+- GST impact assessment
+- Regulatory compliance checking
+- Industry benchmarking
+
+## 📈 Supported Metrics
+
+### Financial Figures
+- Revenue/Sales/Turnover
+- Net Income/Profit After Tax
+- EBITDA
+- Total Assets
+- Total Liabilities
+- Shareholders' Equity
+- Total Debt
+- Cash and Cash Equivalents
+- Working Capital
+
+### Calculated Ratios
+- Profitability ratios (margins, ROE, ROA)
+- Liquidity ratios (current, quick, cash)
+- Leverage ratios (debt-to-equity, debt-to-assets)
+- Efficiency ratios (asset turnover, working capital)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+## 🙏 Acknowledgments
+
+- [CrewAI](https://crewai.com/) for the multi-agent framework
+- [Streamlit](https://streamlit.io/) for the web interface
+- [OpenAI](https://openai.com/) for the language models
+- Indian financial regulations and standards (IndAS, Companies)
