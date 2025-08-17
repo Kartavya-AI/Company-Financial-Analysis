@@ -11,8 +11,9 @@ from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks, D
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from pydantic_settings import BaseSettings
+from contextlib import asynccontextmanager
 
 from src.financial_analysis.crew import FinancialAnalysisCrew
 
@@ -25,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 # Settings
 class Settings(BaseSettings):
-    openai_api_key: str = Field(..., env='OPENAI_API_KEY')
+    openai_api_key: str = Field("", env='OPENAI_API_KEY')  # Made optional for development
     app_name: str = "Financial Analysis API"
     debug: bool = Field(False, env='DEBUG')
     max_file_size: int = Field(50 * 1024 * 1024, env='MAX_FILE_SIZE')  # 50MB
@@ -43,7 +44,7 @@ class AnalysisRequest(BaseModel):
     file_name: str = Field(..., description="Name of the uploaded file")
     analysis_type: str = Field("comprehensive", description="Type of analysis to perform")
     
-    @validator('analysis_type')
+    @field_validator('analysis_type')
     def validate_analysis_type(cls, v):
         allowed_types = ["comprehensive", "quick", "ratios_only"]
         if v not in allowed_types:
@@ -88,6 +89,29 @@ class HealthResponse(BaseModel):
 settings = Settings()
 analysis_cache: Dict[str, Dict[str, Any]] = {}
 
+# Lifespan event manager
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    logger.info("Starting Financial Analysis API")
+    logger.info(f"OpenAI API Key configured: {bool(settings.openai_api_key)}")
+    logger.info(f"Max file size: {settings.max_file_size / (1024*1024)}MB")
+    logger.info(f"Supported formats: {', '.join(settings.allowed_extensions)}")
+    
+    yield
+    
+    # Shutdown
+    logger.info("Shutting down Financial Analysis API")
+    # Clean up any remaining temporary files
+    try:
+        temp_dir = tempfile.gettempdir()
+        for item in os.listdir(temp_dir):
+            if item.startswith('tmp') and os.path.isdir(os.path.join(temp_dir, item)):
+                import shutil
+                shutil.rmtree(os.path.join(temp_dir, item), ignore_errors=True)
+    except Exception as e:
+        logger.error(f"Error during cleanup: {str(e)}")
+
 # FastAPI app
 app = FastAPI(
     title=settings.app_name,
@@ -95,6 +119,7 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 # CORS middleware
@@ -420,28 +445,6 @@ async def general_exception_handler(request, exc):
         status_code=500,
         content={"error": "Internal server error", "timestamp": datetime.now().isoformat()},
     )
-
-# Startup event
-@app.on_event("startup")
-async def startup_event():
-    logger.info("Starting Financial Analysis API")
-    logger.info(f"OpenAI API Key configured: {bool(settings.openai_api_key)}")
-    logger.info(f"Max file size: {settings.max_file_size / (1024*1024)}MB")
-    logger.info(f"Supported formats: {', '.join(settings.allowed_extensions)}")
-
-# Shutdown event
-@app.on_event("shutdown")
-async def shutdown_event():
-    logger.info("Shutting down Financial Analysis API")
-    # Clean up any remaining temporary files
-    try:
-        temp_dir = tempfile.gettempdir()
-        for item in os.listdir(temp_dir):
-            if item.startswith('tmp') and os.path.isdir(os.path.join(temp_dir, item)):
-                import shutil
-                shutil.rmtree(os.path.join(temp_dir, item), ignore_errors=True)
-    except Exception as e:
-        logger.error(f"Error during cleanup: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
